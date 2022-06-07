@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tabelas do banco
+model User {
+  id       String      @id
+  name     String
+  username String      @unique
+  email    String      @unique
+  password String
+  role_id  String
+  role     SystemRoles @relation(fields: [role_id], references: [id])
+
+  @@map("users")
+}
+
+model Employee {
+  id        String @id
+  name      String
+  username  String @unique
+  password  String
+  role_id   String
+  campus_id String
+  campus    Campus @relation(fields: [campus_id], references: [id])
+  role      Roles  @relation(fields: [role_id], references: [id])
+
+  CustomTime CustomTime[]
+  @@map("employees")
+}
+
+model Roles {
+  id   String @id
+  name String
+
+  Employee Employee[]
+  @@map("roles")
+}
+
+model SystemRoles {
+  id   String @id
+  name String
+
+  User User[]
+  @@map("system_roles")
+}
+
+model Campus {
+  id   String @id
+  name String
+  IABM String
+  FABM String
+  ICDM String
+  FCDM String
+  IABT String
+  FABT String
+  ICDT String
+  FCDT String
+  IABN String
+  FABN String
+  ICDN String
+  FCDN String
+
+  Employee Employee[]
+  @@map("campus")
+}
+
+model CustomTime {
+  id          String   @id
+  inicio      String
+  fim         String
+  employee_id String
+  employee    Employee @relation(fields: [employee_id], references: [id])
+
+  @@map("custom_times")
+}
